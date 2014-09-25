@@ -4,7 +4,7 @@ The objects are derived from the Persistant class in order to be used with ZODB.
 The objects form a hierachy with Project() at the top, which contains
 BudgetGroup(), which contains BudgetItem().
 """
-
+#global VAT = 0.14
 from persistent import Persistent
 
 class Project(Persistent):
@@ -20,17 +20,11 @@ class Project(Persistent):
 
     VAT = 0.14
 
-    def __init__(self):
-        """The empty constructor."""
-        
-        self.Name = ''
-        self.Description = ''
-        self.GroupSet = set()
-
-    def __init__(self, name, desc):
+    def __init__(self, name = '', desc = ''):
         """
         The Project constructor takes a string name and desc as the Name of
         the project, and it's Description.
+        The default values of Name and Description would be ''.
         It initialises with an empty set.
         """
         
@@ -53,7 +47,7 @@ class Project(Persistent):
         """
         stotal = 0
         for group in self.GroupSet:
-            stotal+=group.subtotal
+            stotal+=group.subtotal()
 
         return stotal
     
@@ -64,7 +58,8 @@ class Project(Persistent):
         Computing the percentage on the subtotal is more efficient than
         computing the percentage of each group and adding it.
         """
-        return subtotal()*VAT
+        #return (self.subtotal()*VAT)
+        return (self.subtotal()*0.14)
 
    
     def total (self):
@@ -73,7 +68,8 @@ class Project(Persistent):
         Computing the subtotal increasing it with the VAT percentage is
         more efficient than computing the subtotal and VAT separately.
         """
-        return (subtotal*(1+VAT))
+        #return (self.subtotal()*(1+VAT))
+        return (self.subtotal()*(1+0.14))
                 
 
     def __hash__(self):
@@ -88,8 +84,14 @@ class Project(Persistent):
         """
         The toString method returns a string of the name and
         description of the class.
+        Thereafter it prints all the BudgetGroups in the set.
         """
-        return (self.Name + ": " + self.Description)
+
+        output = self.Name + ": " + self.Description
+        for group in self.GroupSet:
+            output+=("\n\t"+str(group))
+            
+        return output
 
  
 class BudgetGroup(Persistent):
@@ -104,12 +106,6 @@ class BudgetGroup(Persistent):
     """
 
     VAT = 0.14
-
-    def __init__(self):
-        """The empty constructor."""
-        self.Name = ''
-        self.Description = ''
-        self.ItemSet = set()
 
     def __init__(self, name, desc):
         """
@@ -136,7 +132,7 @@ class BudgetGroup(Persistent):
         """
         stotal = 0
         for group in self.ItemSet:
-            stotal+=group.subtotal
+            stotal+=group.subtotal()
 
         return stotal
 
@@ -147,7 +143,8 @@ class BudgetGroup(Persistent):
         Computing the percentage on the subtotal is more efficient than
         computing the percentage of each item and adding it.
         """
-        return subtotal()*VAT
+        #return (self.subtotal()*VAT)
+        return (self.subtotal()*0.14)
 
  
     def total (self):
@@ -156,7 +153,8 @@ class BudgetGroup(Persistent):
         Computing the subtotal increasing it with the VAT percentage is
         more efficient than computing the subtotal and VAT separately.
         """
-        return (subtotal*(1+VAT))
+        #return (self.subtotal()*(1+VAT))
+        return (self.subtotal()*(1+0.14))
 
 
     def __hash__(self):
@@ -173,8 +171,13 @@ class BudgetGroup(Persistent):
         """
         The toString method returns a string of the name and
         description of the class.
+        Thereafter it prints all the BudgetItems in the set.
         """
-        return (self.Name + ": " + self.Description)
+        output = self.Name + ": " + self.Description
+        for item in self.ItemSet:
+            output+=("\n\t\t"+str(item))
+            
+        return output
 
 
 class BudgetItem(Persistent):
@@ -190,14 +193,7 @@ class BudgetItem(Persistent):
 
     VAT = 0.14
 
-    def __init__(self):
-        """The empty constructor."""
-        self.Name = ''
-        self.Description = ''
-        iself.Quantity = 0
-        self.Rate = 0
-
-    def __init__(self, name, desc, quan, rate):
+    def __init__(self, name = '', desc = '', quan = 0, rate = 0):
         """
         The BudgetItem constructor takes a string name and desc as the Name of
         the project, and it's Description.
@@ -222,7 +218,9 @@ class BudgetItem(Persistent):
         The vat function calculates the VAT percentage on the subtotal.
         It represents the VAT added to this item.
         """
-        return subtotal()*VAT
+        #return (self.subtotal()*VAT
+        return (self.subtotal()*VAT)
+
 
  
     def total (self):
@@ -230,7 +228,7 @@ class BudgetItem(Persistent):
         The total function adds the subtotal and VAT of this item.
         It represents the total cost of this item.
         """
-        return (subtotal+vat)
+        return (self.subtotal()+vat)
 
 
     def __hash__(self):
