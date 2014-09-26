@@ -1,4 +1,5 @@
 import unittest
+import collections
 
 from models import Project, BudgetGroup, BudgetItem
 
@@ -17,15 +18,15 @@ class BudgetItem_Object_Tests(unittest.TestCase):
 
     def test_budgetitem_VAT(self):
         budgetitem = self.construct_BudgetItem()
-        self.assertEqual(budgetitem.vat(), 1.4)
+        self.assertAlmostEqual(budgetitem.vat(), 1.4)
 
-    def test_budgetitem_total(self):
+    def test_Budgetitem_Total(self):
         budgetitem = self.construct_BudgetItem()
         self.assertEqual(budgetitem.total(), 11.4)
 
-    def test_budgetitem_is_hashable(self):
+    def test_Budgetitem_Is_Hashable(self):
         budgetitem = self.construct_BudgetItem()
-        self.assertEqual(budgetitem, collections.Hashable)
+        self.assertIsInstance(budgetitem, collections.Hashable)
 
 class BudgetGroup_Object_Tests(unittest.TestCase):
 
@@ -35,6 +36,7 @@ class BudgetGroup_Object_Tests(unittest.TestCase):
     def construct_Single_Item_BudgetGroup(self):
         group = BudgetGroup("BGTestName", "BGTestDescription")
         group.add (BudgetItem("ItemName", "ItemDescription", 5, 2))
+        return group
 
     def test_BudgetGroup_Single_String(self):
         budgetgroup = self.construct_Empty_BudgetGroup()
@@ -54,21 +56,21 @@ class BudgetGroup_Object_Tests(unittest.TestCase):
 
     def test_BudgetGroup_Single_Cost(self):
         budgetgroup = self.construct_Single_Item_BudgetGroup()
-        self.assertEqual(10, budgetgroup.subtotal)
+        self.assertEqual(10, budgetgroup.subtotal())
 
     def test_BudgetGroup_Single_Deleting(self):
         budgetgroup = self.construct_Single_Item_BudgetGroup()
-        self.assertEqual("Confirmed", budgetgroup.delete
+        self.assertEqual("Confirmed.", budgetgroup.delete
                          (BudgetItem("ItemName", "ItemDescription", 5, 2)))
 
     def test_BudgetGroup_Multiple_Cost(self):
         budgetgroup = self.construct_Single_Item_BudgetGroup()
-        budgetGroup.add(BudgetItem("SecondName", "SecondDescription", 10, 3))
-        self.assertEqual(40, budgetgroup.subtotal)
+        budgetgroup.add(BudgetItem("SecondName", "SecondDescription", 10, 3))
+        self.assertEqual(40, budgetgroup.subtotal())
 
     def test_BudgetGroup_Multiple_Strings(self):
         budgetgroup = self.construct_Single_Item_BudgetGroup()
-        budgetGroup.add(BudgetItem("SecondName", "SecondDescription", 10, 3))
+        budgetgroup.add(BudgetItem("SecondName", "SecondDescription", 10, 3))
         self.assertEqual("BGTestName: BGTestDescription\n\t\t"+
                          "ItemName: ItemDescription\n\t\t"+
                          "SecondName: SecondDescription", str(budgetgroup))
@@ -76,7 +78,7 @@ class BudgetGroup_Object_Tests(unittest.TestCase):
 
     def test_BudgetGroup_Is_Hashable(self):
         budgetgroup = self.construct_Single_Item_BudgetGroup()
-        self.assertEqual(budgetgroup, collections.Hashable)
+        self.assertIsInstance(budgetgroup, collections.Hashable)
 
 
      
@@ -89,12 +91,13 @@ class Project_Object_Tests(unittest.TestCase):
         project = Project("PojectTestName", "ProjectTestDescription")
         groupone = BudgetGroup("BGTestName", "BGTestDescription")
         itemone = BudgetItem("BITestName", "BITestDescription", 2, 5)
-        group.add(itemone)              
+
+        groupone.add(itemone)              
         project.add(groupone)
 
         return project
 
-    def construct_Muliple_Project(self):
+    def construct_Multiple_Project(self):
         project = Project("PojectTestName", "ProjectTestDescription")
         groupone = BudgetGroup("BGTestName", "BGTestDescription")
         grouptwo = BudgetGroup("BGTestNameTwo", "BG Test Description Two")
@@ -116,19 +119,19 @@ class Project_Object_Tests(unittest.TestCase):
     
     def test_Empty_Project_String(self):
         project = self.construct_Empty_Project()
-        self.assertEqual(str(projet), "PojectTestName: ProjectTestDescription")
+        self.assertEqual(str(project), "PojectTestName: ProjectTestDescription")
                         
     def test_Empty_Project_Cost(self):
         project = self.construct_Empty_Project()
-        self.assertEqual(projet.subtotal, 0)
+        self.assertEqual(project.subtotal(), 0)
 
     def test_BudgetGroup_Empty_Deleting(self):
         project = self.construct_Empty_Project()
         self.assertEqual("Not in set.", project.delete(BudgetGroup()))
 
     def test_Single_Project_Cost(self):
-        project = self.construct_Empty_Project()
-        self.assertEqual(projet.subtotal, 10)
+        project = self.construct_Single_Project()
+        self.assertEqual(project.subtotal(), 10)
 
     def test_Single_Project_Deleting(self):
         project = self.construct_Single_Project()
@@ -136,28 +139,29 @@ class Project_Object_Tests(unittest.TestCase):
 
 
     def test_Multiple_Project_Subtotal(self):
-        project = self.construct_Muliple_Project()
+        project = self.construct_Multiple_Project()
         self.assertEqual(70, project.subtotal())
 
     
     def test_Multiple_Project_VAT(self):
-        project = self.construct_Muliple_Project()
-        self.assertEqual(9.8, project.VAT())
+        project = self.construct_Multiple_Project()
+        self.assertEqual(9.8, project.vat())
 
     def test_Multiple_Project_String(self):
         project = self.construct_Multiple_Project()
-        self.assertEqual("PojectTestName: ProjectTestDescription\n\t" +
+        self.assertEqual("PojectTestName: ProjectTestDescription\n\t"+
                          "BGTestName: BGTestDescription\n\t\t"+
                          "BITestName: BITestDescription\n\t\t"+
                          "BITestNameTwo: BI Test Description Two\n\t"+
                          "BGTestNameTwo: BG Test Description Two\n\t\t"+
-                         "BITestNameThree: BI Test Description Three\n\t\t"+
-                         "BITestNameFour: BI Test Description Four", str(project))
+                         "BITestNameFour: BI Test Description Four\n\t\t"+
+                         "BITestNameThree: BI Test Description Three",
+                         str(project))
                                        
                         
     def test_Project_Is_Hashable(self):
-        project = self.construct_Single__Project()
-        self.assertEqual(project, collections.Hashable)
+        project = self.construct_Single_Project()
+        self.assertIsInstance(project, collections.Hashable)
 
 
 if __name__ == '__main__':

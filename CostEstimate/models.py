@@ -116,7 +116,7 @@ class BudgetGroup(Persistent):
 
     VAT = 0.14
 
-    def __init__(self, name, desc):
+    def __init__(self, name = '', desc = ''):
         """
         The BudgetGroup constructor takes a string name and desc as the Name of
         the project, and it's Description.
@@ -228,8 +228,9 @@ class BudgetItem(Persistent):
         """
         The subtotal function returns the product of the Quantity and Rate
         attributes as the cost of the items in this object.
+        Covert the return type to int.
         """
-        return self.Quantity*self.Rate
+        return (self.Quantity*self.Rate)*1.0
 
 
     def vat(self):
@@ -247,7 +248,7 @@ class BudgetItem(Persistent):
         The total function adds the subtotal and VAT of this item.
         It represents the total cost of this item.
         """
-        return (self.subtotal()+vat)
+        return (self.subtotal() + self.vat())
 
 
     def __hash__(self):
