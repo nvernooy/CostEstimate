@@ -22,6 +22,10 @@ def addData():
 
     # Loop while adding groups and items
     while True:
+        # The user has to enter "0" to stop the loop
+        if "0" == raw_input ("\nEnter 0 to stop adding BudgetGroups: "):
+                break
+        
         name = raw_input("\nEnter BudgetGroup Name:\n")
         desc = raw_input("\nEnter BudgetGroup Description:\n")
 
@@ -30,6 +34,10 @@ def addData():
 
         # Loop and add multiple Items
         while True:
+            # The user has to enter "0" to stop the loop
+            if "0" == raw_input ("\nEnter 0 to stop adding BudgetItems: "):
+                break
+            
             name = raw_input("\nEnter BudgetItem Name:\n")
             desc = raw_input("\nEnter BudgetItem Description:\n")
             quan = raw_input("\nEnter BudgetItem Quantity:\n")
@@ -38,15 +46,9 @@ def addData():
             # Instantiate a BudgetItem.
             item = BudgetItem (name, desc, int(quan), int(rate))
             group.add(item)
-
-            # The user has to enter "0" to stop the loop
-            if "0" == raw_input ("\nEnter 0 to stop adding BudgetItems: "):
-                break
             
         project.add(group)
-        # The user has to enter "0" to stop the loop
-        if "0" == raw_input ("\nEnter 0 to stop adding BudgetGroups: "):
-                break
+        
 
     # Return the Project will all the objects in it
     return project

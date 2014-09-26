@@ -37,8 +37,14 @@ class Project(Persistent):
         self.GroupSet.add(group)
 
     def delete(self, group):
-        """The delete method removes a BudgetGroup object from the set."""
-        self.GroupSet.remove(group)
+        """The delete method removes a BudgetGroup object from the set.
+        Before removing an object it makes sure it is in the set.
+        """
+        if (group in self.GroupSet):
+            self.GroupSet.remove(group)
+            return "Confirmed."
+        else:
+            return "Not in set."
  
     def subtotal(self):
         """
@@ -46,8 +52,9 @@ class Project(Persistent):
         the BudgetGroup objects.
         """
         stotal = 0
-        for group in self.GroupSet:
-            stotal+=group.subtotal()
+        if self.GroupSet is not None:
+            for group in self.GroupSet:
+                stotal+=group.subtotal()
 
         return stotal
     
@@ -84,12 +91,14 @@ class Project(Persistent):
         """
         The toString method returns a string of the name and
         description of the class.
-        Thereafter it prints all the BudgetGroups in the set.
+        If the set is not empty thereafter it prints
+        all the BudgetGroups in the set.
         """
 
         output = self.Name + ": " + self.Description
-        for group in self.GroupSet:
-            output+=("\n\t"+str(group))
+        if self.GroupSet is not None:
+            for group in self.GroupSet:
+                output+=("\n\t"+str(group))
             
         return output
 
@@ -122,8 +131,15 @@ class BudgetGroup(Persistent):
         self.ItemSet.add(item)
 
     def delete(self, item):
-        """The delete method removes a BudgetGroup object from the set."""
-        self.ItemSet.remove(item)
+        """
+        The delete method removes a BudgetGroup object from the set.
+        Before removing an object it makes sure it is in the set.
+        """
+        if (item in self.ItemSet):
+            self.ItemSet.remove(item)
+            return "Confirmed."
+        else:
+            return "Not in set."
 
     def subtotal(self):
         """
@@ -131,8 +147,9 @@ class BudgetGroup(Persistent):
         the BudgetItem objects.
         """
         stotal = 0
-        for group in self.ItemSet:
-            stotal+=group.subtotal()
+        if self.ItemSet is not None:
+            for group in self.ItemSet:
+                stotal+=group.subtotal()
 
         return stotal
 
@@ -171,11 +188,13 @@ class BudgetGroup(Persistent):
         """
         The toString method returns a string of the name and
         description of the class.
-        Thereafter it prints all the BudgetItems in the set.
+        If the set is not empty thereafter it prints all
+        the BudgetItems in the set.
         """
         output = self.Name + ": " + self.Description
-        for item in self.ItemSet:
-            output+=("\n\t\t"+str(item))
+        if self.ItemSet is not None:
+            for item in self.ItemSet:
+                output+=("\n\t\t"+str(item))
             
         return output
 
@@ -219,7 +238,7 @@ class BudgetItem(Persistent):
         It represents the VAT added to this item.
         """
         #return (self.subtotal()*VAT
-        return (self.subtotal()*VAT)
+        return (self.subtotal()*0.14)
 
 
  
