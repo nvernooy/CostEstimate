@@ -6,10 +6,10 @@ and it's related objects.
 These are stored in the ProjectData database.
 """
 
-from BTrees.OOBTree import OOBTree
 import ZODB
 import ZODB.FileStorage
 import transaction
+from BTrees.OOBTree import OOBTree
 from models import Project, BudgetGroup, BudgetItem
 
 def addData():
@@ -40,11 +40,37 @@ def addData():
             
             name = raw_input("\nEnter BudgetItem Name:\n")
             desc = raw_input("\nEnter BudgetItem Description:\n")
-            quan = raw_input("\nEnter BudgetItem Quantity:\n")
-            rate = raw_input("\nEnter BudgetItem Rate:\n")           
+            
+            # Ensure quantities are not negative or letters.
+            # If the input is letters catch the error and set quantity to
+            # -1 so it goes into the loop.
+            try:
+                quan = int(raw_input("\nEnter BudgetItem Quantity:\n") )
+            except ValueError:
+                quan = -1             
+            while quan < 0:
+                try:
+                    quan = int(raw_input("\nQuantity can't be negative or letters. "+
+                                     "Enter BudgetItem Quantity:\n"))
+                except ValueError:
+                    quan = -1
+                    
+            # Ensure rates are not negative.
+            # If the input is letters catch the error and set rate to
+            # -1 so it goes into the loop.
+            try:
+                rate = int(raw_input("\nEnter BudgetItem Rate:\n"))
+            except ValueError:
+                rate = -1
+            while rate < 0:
+                try:
+                    rate = int(raw_input("\nRate can't be negative or letters. "+
+                                     "Enter BudgetItem Rate:\n"))
+                except ValueError:
+                    rate = -1
 
             # Instantiate a BudgetItem.
-            item = BudgetItem (name, desc, int(quan), int(rate))
+            item = BudgetItem (name, desc, quan, rate)
             group.add(item)
             
         project.add(group)
@@ -68,11 +94,15 @@ if __name__ == "__main__":
 
     while True:
         # Make a selection in the menu.
-        select = raw_input("Make your selection\n"+
-                           "1\tAdd a project\n"+
-                           "2\tDisplay data\n"+
-                           "3\tDisplay costs\n"+
-                           "4\tExit\n")
+        try:
+            select = raw_input("Make your selection\n"+
+                               "1\tAdd a project\n"+
+                               "2\tDisplay data\n"+
+                               "3\tDisplay costs\n"+
+                               "4\tExit\n")
+        except ValueError:
+            print "Enter 1, 2, 3, or 4."
+            select = 5
 
         # Add a project and fill it
         if select == "1":

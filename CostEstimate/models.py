@@ -6,6 +6,7 @@ BudgetGroup(), which contains BudgetItem().
 """
 #global VAT = 0.14
 from persistent import Persistent
+from BTrees.OOBTree import OOSet
 
 class Project(Persistent):
     """
@@ -30,7 +31,7 @@ class Project(Persistent):
         
         self.Name = name
         self.Description = desc
-        self.GroupSet = set()
+        self.GroupSet = OOSet()
 
     def add(self, group):
         """The add method adds a BudgetGroup object to the set."""
@@ -52,9 +53,8 @@ class Project(Persistent):
         the BudgetGroup objects.
         """
         stotal = 0
-        if self.GroupSet is not None:
-            for group in self.GroupSet:
-                stotal+=group.subtotal()
+        for group in self.GroupSet:
+            stotal+=group.subtotal()
 
         return stotal
     
@@ -124,7 +124,7 @@ class BudgetGroup(Persistent):
         """
         self.Name = name
         self.Description = desc
-        self.ItemSet = set()
+        self.ItemSet = OOSet()
 
     def add(self, item):
         """The add method adds a BudgetItem object to the set."""
@@ -147,9 +147,8 @@ class BudgetGroup(Persistent):
         the BudgetItem objects.
         """
         stotal = 0
-        if self.ItemSet is not None:
-            for group in self.ItemSet:
-                stotal+=group.subtotal()
+        for group in self.ItemSet:
+            stotal+=group.subtotal()
 
         return stotal
 
@@ -217,12 +216,17 @@ class BudgetItem(Persistent):
         The BudgetItem constructor takes a string name and desc as the Name of
         the project, and it's Description.
         It takes quan and rate as numbers for Quantity and Rate.
+        If Quantity or Rate is less than zero, print a message
+        and set them to zero.
         """
         self.Name = name
         self.Description = desc
         self.Quantity = quan
         self.Rate = rate
-    
+        if ((self.Quantity < 0) or (self.Rate < 0)):
+            self.Quantity = 0
+            self.Rate = 0
+                     
         
     def subtotal(self):
         """
