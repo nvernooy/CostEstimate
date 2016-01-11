@@ -1,4 +1,4 @@
-Project
+Cost Estimate Project
 =======
 
 Exercise project for using Pyramid and ZODB.
